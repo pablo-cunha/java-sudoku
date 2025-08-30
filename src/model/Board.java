@@ -35,14 +35,15 @@ public class Board {
         return NON_STARTED;
     }
 
-    boolean incompleteGame = spaceList.stream().anyMatch(s -> isNull(s.getActual()));
+    boolean incompleteGame = spaceList.stream()
+        .anyMatch(s -> isNull(s.getActual()));
 
     if (incompleteGame) {
         return INCOMPLETE;
     }
 
     return COMPLETE;
-}
+    }
 
     public boolean hasErrors() {
         if(getStatus() == NON_STARTED) {
@@ -55,5 +56,37 @@ public class Board {
         nonNull(s.getActual()) && !s.getActual().equals(s.getExpected()));
 
         return errorSpaces;
+    }
+
+    public boolean changeValue(final int column, final int row, final Integer value) {
+        var space = spaces.get(column).get(row);
+
+        if(space.isFixed()) {
+            return false;
+        }
+
+        space.setActual(value);
+        return true;
+    }
+
+    public boolean clearSpace(final int column, final int row) {
+        var space = spaces.get(column).get(row);
+
+        if(space.isFixed()) {
+            return false;
+        }
+
+        space.clearSpace();
+        return true;
+    }
+
+    public void reset() {
+        spaces.forEach(column -> column.forEach(Space::clearSpace));
+    }
+
+    public boolean gameIsFinished() {
+        boolean isFinished = !hasErrors() && getStatus().equals(COMPLETE);
+        
+        return isFinished;
     }
 }
